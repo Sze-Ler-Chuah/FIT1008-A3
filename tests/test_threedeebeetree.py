@@ -25,7 +25,7 @@ class TestThreeDeeBeeTree(unittest.TestCase):
         tdbt = ThreeDeeBeeTree()
         for i, point in enumerate(self.TESTING_POINTS):
             tdbt[point] = i
-        
+
         child = tdbt.root.get_child_for_key((-11, 4, -16))
         self.assertEqual(child.key, (-11, 4, -16))
 
@@ -36,6 +36,7 @@ class TestThreeDeeBeeTree(unittest.TestCase):
         self.assertEqual(other_subchild.key, (5, 5, 7))
 
         empty = tdbt.root.get_child_for_key((-6, 3, -20))
+        print(tdbt.is_leaf(empty))
         self.assertEqual(empty, None)
 
     @timeout()
@@ -44,7 +45,7 @@ class TestThreeDeeBeeTree(unittest.TestCase):
         tdbt = ThreeDeeBeeTree()
         for i, point in enumerate(self.TESTING_POINTS):
             tdbt[point] = i
-        
+
         child = tdbt.root.get_child_for_key((-11, 4, -16))
         subchild = child.get_child_for_key((-18, 7, 5))
         other_subchild = child.get_child_for_key((3, 10, 20))
@@ -64,3 +65,5 @@ class TestThreeDeeBeeTree(unittest.TestCase):
         
         self.assertEqual(tdbt.get_tree_node_by_key((16, 0, -14)).item, 7)
         self.assertEqual(tdbt.get_tree_node_by_key((6, -1, -17)).item, 0)
+        self.assertRaises(KeyError, tdbt.get_tree_node_by_key, (1, 1, 1))
+        self.assertRaises(ValueError, tdbt.__setitem__, (16, 0, -14), 1)

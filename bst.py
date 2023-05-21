@@ -92,8 +92,10 @@ class BinarySearchTree(Generic[K, I]):
             current = TreeNode(key, item=item)
             self.length += 1
         elif key < current.key:
+            current.set_subtree_size(current.subtree_size + 1)
             current.left = self.insert_aux(current.left, key, item)
         elif key > current.key:
+            current.set_subtree_size(current.subtree_size + 1)
             current.right = self.insert_aux(current.right, key, item)
         else:  # key == current.key
             raise ValueError('Inserting duplicate item')
@@ -107,12 +109,13 @@ class BinarySearchTree(Generic[K, I]):
             Attempts to delete an item from the tree, it uses the Key to
             determine the node to delete.
         """
-
         if current is None:  # key not found
             raise ValueError('Deleting non-existent item')
         elif key < current.key:
-            current.left  = self.delete_aux(current.left, key)
+            current.set_subtree_size(current.subtree_size - 1)
+            current.left = self.delete_aux(current.left, key)
         elif key > current.key:
+            current.set_subtree_size(current.subtree_size - 1)
             current.right = self.delete_aux(current.right, key)
         else:  # we found our key => do actual deletion
             if self.is_leaf(current):
@@ -127,7 +130,7 @@ class BinarySearchTree(Generic[K, I]):
 
             # general case => find a successor
             succ = self.get_successor(current)
-            current.key  = succ.key
+            current.key = succ.key
             current.item = succ.item
             current.right = self.delete_aux(current.right, succ.key)
 
@@ -139,13 +142,26 @@ class BinarySearchTree(Generic[K, I]):
             It should be a child node having the smallest key among all the
             larger keys.
         """
-        raise NotImplementedError()
+        if current.right is None:
+            return None
+        else:
+            return self.get_successor_aux(current.right)
+
+    def get_successor_aux(self,current : TreeNode) -> TreeNode:
+        if current.left is None:
+            return current
+        else:
+            return self.get_successor_aux(current.left)
 
     def get_minimal(self, current: TreeNode) -> TreeNode:
         """
             Get a node having the smallest key in the current sub-tree.
         """
-        raise NotImplementedError()
+        if current.left is None:
+            return current
+        else :
+            return self.get_minimal(current.left)
+
 
     def is_leaf(self, current: TreeNode) -> bool:
         """ Simple check whether or not the node is a leaf. """
@@ -166,7 +182,7 @@ class BinarySearchTree(Generic[K, I]):
             print('{0}{1}'.format(real_prefix, str(current.key)), file=to)
 
             if current.left or current.right:
-                self.draw_aux(current.left,  prefix=prefix + '\u2551 ', final='\u255f\u2500', to=to)
+                self.draw_aux(current.left, prefix=prefix + '\u2551 ', final='\u255f\u2500', to=to)
                 self.draw_aux(current.right, prefix=prefix + '  ', final='\u2559\u2500', to=to)
         else:
             real_prefix = prefix[:-2] + final
@@ -176,4 +192,16 @@ class BinarySearchTree(Generic[K, I]):
         """
         Finds the kth smallest value by key in the subtree rooted at current.
         """
-        raise NotImplementedError()
+        return self.kth_smallest_aux(current, k)
+
+    def kth_smallest_aux(self, current: TreeNode, k: int, nodes_travelled:int = 0) -> TreeNode:
+        if current.left is None:
+            left_subtree_elem = 0
+        else:
+            left_subtree_elem = current.left.subtree_size
+        if nodes_travelled + left_subtree_elem >= k and current.left is not None:
+            return self.kth_smallest_aux(current.left, k, nodes_travelled)
+        elif nodes_travelled + left_subtree_elem == k - 1:
+            return current
+        elif nodes_travelled + left_subtree_elem < k - 1 and current.right is not None:
+            return self.kth_smallest_aux(current.right, k, nodes_travelled + left_subtree_elem + 1)

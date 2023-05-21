@@ -10,7 +10,7 @@ class RatioTest(unittest.TestCase):
     @timeout()
     @number("2.1")
     def test_example(self):
-        random.seed(1293810293)
+        #random.seed(1293810293)
         p = Percentiles()
         points = [4, 9, 14, 15, 16, 82, 87, 91, 92, 99]
         random.shuffle(points)
@@ -25,7 +25,7 @@ class RatioTest(unittest.TestCase):
     @timeout()
     @number("2.2")
     def test_removal(self):
-        random.seed(2938742)
+        #random.seed(2938742)
         p = Percentiles()
         points = [4, 9, 14, 15, 16, 82, 87, 91, 92, 99]
         random.shuffle(points)
@@ -33,10 +33,10 @@ class RatioTest(unittest.TestCase):
             p.add_point(point)
         p.remove_point(4)
         p.remove_point(92)
-
         res = p.ratio(13, 10)
         self.assertSetEqual(set(res), {15, 16, 82, 87, 91})
 
         p.remove_point(82)
+        print(p.bsearch.root.key)
         res = p.ratio(13, 10)
         self.assertSetEqual(set(res), {14, 15, 16, 87, 91})
