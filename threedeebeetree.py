@@ -18,7 +18,7 @@ class BeeNode:
         return self.node_lst[insert_index(self, point)]
 
 
-def insert_index(current, key):
+def insert_index(current: BeeNode, key: Point) -> int:
     a, b, c = key
     total = 0
     if a >= current.key[0]:
@@ -72,7 +72,7 @@ class ThreeDeeBeeTree(Generic[I]):
     def get_tree_node_by_key(self, key: Point) -> BeeNode:
         return self.get_tree_node_by_key_aux(self.root, key)
 
-    def get_tree_node_by_key_aux(self,current,key) -> BeeNode:
+    def get_tree_node_by_key_aux(self, current, key) -> BeeNode:
         if current is not None:
             if current.key == key:
                 return current

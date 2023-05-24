@@ -112,10 +112,9 @@ class BinarySearchTree(Generic[K, I]):
         if current is None:  # key not found
             raise ValueError('Deleting non-existent item')
         elif key < current.key:
-            current.set_subtree_size(current.subtree_size - 1)
+            #current.set_subtree_size(current.subtree_size - 1)
             current.left = self.delete_aux(current.left, key)
         elif key > current.key:
-            current.set_subtree_size(current.subtree_size - 1)
             current.right = self.delete_aux(current.right, key)
         else:  # we found our key => do actual deletion
             if self.is_leaf(current):
@@ -133,7 +132,7 @@ class BinarySearchTree(Generic[K, I]):
             current.key = succ.key
             current.item = succ.item
             current.right = self.delete_aux(current.right, succ.key)
-
+        current.set_subtree_size(current.subtree_size - 1)
         return current
 
     def get_successor(self, current: TreeNode) -> TreeNode:
@@ -205,3 +204,53 @@ class BinarySearchTree(Generic[K, I]):
             return current
         elif nodes_travelled + left_subtree_elem < k - 1 and current.right is not None:
             return self.kth_smallest_aux(current.right, k, nodes_travelled + left_subtree_elem + 1)
+
+if __name__ == "__main__":
+    import random
+    BST = BinarySearchTree()
+    BST[88] = 1
+    BST[70] = 2
+    BST[60] = 3
+    BST[75] = 2
+    BST[50] = 3
+    BST[64] = 2
+    BST[73] = 3
+    BST[78] = 2
+    BST[40] = 3
+    BST[53] = 2
+    BST[61] = 3
+    BST[65] = 2
+    BST[72] = 3
+    BST[74] = 2
+    BST[77] = 3
+    BST[80] = 1
+    BST[115] = 2
+    BST[98] = 3
+    BST[120] = 2
+    BST[96] = 3
+    BST[105] = 2
+    BST[117] = 3
+    BST[145] = 2
+    BST[95] = 3
+    BST[97]= 2
+    BST[99] = 3
+    BST[107] = 2
+    BST[116] = 3
+    BST[118] = 2
+    BST[130] = 3
+    BST[199] = 0
+
+    lst = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+    random.shuffle(lst)
+
+
+
+    # BST[99] = 7
+    # BST[87] = 2
+    # BST[50] = 9
+    # BST[59] = 0
+    # BST[6] = 9
+
+    for i in range(1,len(BST)+1):
+        kth = BST.kth_smallest(i, BST.root)
+        print(i, ",", kth.key)
