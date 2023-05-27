@@ -82,9 +82,20 @@ class MaxHeap(Generic[T]):
             self.sink(1)
         return max_elt
 
-    def heapify(self, an_array: list, verbose=False) -> None:
+    def heapify(self, an_array: list) -> None:
         """
-        Apply bottom-up heap construction in O(n) time.
+        To construct a heap using bottom-up heap construction and Apply bottom-up heap construction in O(n) time.
+
+        Args :
+            an_array : The list to be parsed in the heap
+
+        Complexity :
+            Best Case = Worst Case : O(n), n as the number of elements in an_array
+
+        Explanation :
+            First, we copy the original list into a new list with n+1 capacity by using a for loop ( Time Complexity : O(n), n as the number of elements in an_array )
+            Then, we sink all parents starting from the height-1 level by using a for loop and sink() method to ensure the heap is accurate
+            Thus, the overall complexity will be O(n), where n is the number of elements in an_arrayt
         """
         for i in range(self.length):
             self.the_array[i+1] = an_array[i]

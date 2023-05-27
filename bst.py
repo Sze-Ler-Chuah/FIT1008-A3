@@ -12,7 +12,6 @@ from typing import TypeVar, Generic
 from node import TreeNode
 import sys
 
-
 # generic types
 K = TypeVar('K')
 I = TypeVar('I')
@@ -112,7 +111,6 @@ class BinarySearchTree(Generic[K, I]):
         if current is None:  # key not found
             raise ValueError('Deleting non-existent item')
         elif key < current.key:
-            #current.set_subtree_size(current.subtree_size - 1)
             current.left = self.delete_aux(current.left, key)
         elif key > current.key:
             current.right = self.delete_aux(current.right, key)
@@ -135,32 +133,86 @@ class BinarySearchTree(Generic[K, I]):
         current.set_subtree_size(current.subtree_size - 1)
         return current
 
-    def get_successor(self, current: TreeNode) -> TreeNode:
+    def get_successor(self, current: TreeNode) -> TreeNode | None:
         """
-            Get successor of the current node.
-            It should be a child node having the smallest key among all the
-            larger keys.
+        Get successor of the current node. It should be a child node having the smallest key among all the larger keys.
+
+        Args:
+            current: The node where its successor will be found throughout this method
+
+        Returns:
+            The child node from the current node which have the smallest key among other nodes but greater than key of current node
+
+        Complexity:
+            Best case: O(1), current is the leaf of the tree
+            Worst case: O(Depth), current is the root of the tree, Depth is the height of the tree
+
+        Explanation:
+            First, check whether current.right is None ( Time Complexity : O(1) )
+            If yes, return None ( Time Complexity : O(1) )
+
+            Best Case Scenario:
+                Current is the leaf node of tree, so it does not have any child nodes. Thus, it will return None,
+                hence the complexity of best case is O(1)
+
+            Then, smallest key which is larger than key of current will be found from the right subtree of current by using get_minimal method
+
+            Worst case scenario:
+                When current is at the root of the tree, we will need to traverse to the edge of the tree in order to obtain the
+                smallest key which is larger than key of current node, which has the complexity of O(Depth), Depth as the height of the tree.
+
+                Thre are 2 situations when talking about worst case scenario.
+
+                First one is the tree is unbalanced. Depth of tree will be n-1, n as the number of elements of the tree,
+                hence the complexity will be O(n),n as the number of elements of the tree
+
+                Second one is the tree is balanced. Depth of the tree will be log(n), n as the number of elements of the tree,
+                hence the complexity will be O(log(n)), n as the number of elements of the tree.
         """
         if current.right is None:
             return None
-        else:
-            return self.get_successor_aux(current.right)
-
-    def get_successor_aux(self,current : TreeNode) -> TreeNode:
-        if current.left is None:
-            return current
-        else:
-            return self.get_successor_aux(current.left)
+        return self.get_minimal(current.right)
 
     def get_minimal(self, current: TreeNode) -> TreeNode:
         """
-            Get a node having the smallest key in the current sub-tree.
+        Get a node having the smallest key in the current sub-tree.
+
+        Args:
+            current: The node where its successor will be found throughout this method
+
+        Returns:
+            The child node from the current node which have the smallest key among other nodes but greater than key of current node
+
+        Complexity:
+            Best case: O(1), current is the leaf of the tree
+            Worst case: O(Depth), current is the root of the tree, Depth is the height of the tree
+
+        Explanation:
+            First, check whether current.left is None ( Time Complexity : O(1) )
+            If yes, return current ( Time Complexity : O(1) )
+
+            Best Case Scenario:
+                Current is the leaf node of tree, so it does not have any child nodes. Thus, it will return current,
+                hence the complexity of best case is O(1)
+
+            Else, it wil call itself with current.left as parameter until the smallest key is found
+
+            Worst case scenario:
+                When current is at the root of the tree, we will need to traverse to the edge of the tree in order to obtain the
+                smallest key which is larger than key of current node, which has the complexity of O(Depth), Depth as the height of the tree.
+
+                Thre are 2 situations when talking about worst case scenario.
+
+                First one is the tree is unbalanced. Depth of tree will be n-1, n as the number of elements of the tree,
+                hence the complexity will be O(n),n as the number of elements of the tree
+
+                Second one is the tree is balanced. Depth of the tree will be log(n), n as the number of elements of the tree,
+                hence the complexity will be O(log(n)), n as the number of elements of the tree.
         """
         if current.left is None:
             return current
-        else :
+        else:
             return self.get_minimal(current.left)
-
 
     def is_leaf(self, current: TreeNode) -> bool:
         """ Simple check whether or not the node is a leaf. """
@@ -190,67 +242,58 @@ class BinarySearchTree(Generic[K, I]):
     def kth_smallest(self, k: int, current: TreeNode) -> TreeNode:
         """
         Finds the kth smallest value by key in the subtree rooted at current.
+
+        Args :
+           k : It is used to search for the node with the kth smallest key
+           current : The current node which is used for comparison to find the node we wanted
+
+        Returns :
+            The node with the kth smallest key among all the nodes in BST
+
+        Complexity :
+            Best Case : O(1), when the kth smallest is the current node in the first comparison
+            Worst Case : (Occurs when the k value is equal to the number of nodes in the BST, as it has to go into the last level of the BST)
+                        - Balanced Tree O(logn), where n is the number of nodes in the BST
+                        - Unbalanced Tree O(n), where n is the number of nodes in the BST
+
+        Explanation :
+            At here we just return the TreeNode which is computed from kth_smallest_aux ( Time Complexity : O(D) )
+
         """
         return self.kth_smallest_aux(current, k)
 
-    def kth_smallest_aux(self, current: TreeNode, k: int, nodes_travelled:int = 0) -> TreeNode:
-        if current.left is None:
-            left_subtree_elem = 0
+    def kth_smallest_aux(self, current: TreeNode, k: int, nodes_travelled: int = 0) -> TreeNode:
+        """
+               A helper function to find the kth smallest value by key in the subtree rooted at current.
+
+               Complexity:
+                   Best Case - O(1), occurs when the kth smallest is the current node in the first comparison
+                   Worst Case (Occurs when the k value is equal to the number of nodes in the BST, as it has to go into the last level of the BST)
+                       - Balanced Tree O(logn), where n is the number of nodes in the BST
+                       - Unbalanced Tree O(n), where n is the number of nodes in the BST
+
+               Explanation:
+                   There are several conditions to check before we find the kth smallest value by key in the subtree rooted at current:
+                       (i) If k value is smaller than (nodes_travelled + left_subtree_elem) and current node has a left child, means that the kth smallest element will surely be in the current left-subtree
+                           Recursively calls the kth_smallest_aux and pass the current left child as argument
+                       (ii) If nodes_travelled + left_subtree_elem + 1 equals to k, the reason we +1 is we have to count the current node itself, means we found the kth smallest element
+                       (iii) If k value is bigger than (nodes_travelled + left_subtree_elem) and current node has a right child, means that the kth smallest element will surely be in the current right-subtree
+                           Recursively calls the kth_smallest_aux and pass the current right child as argument
+               """
+        if current.left is None:  # O(1)
+            left_subtree_elem = 0  # O(1)
         else:
-            left_subtree_elem = current.left.subtree_size
-        if nodes_travelled + left_subtree_elem >= k and current.left is not None:
+            left_subtree_elem = current.left.subtree_size  # O(1)
+
+        # If k value is smaller than (nodes_travelled + left_subtree_elem) and current node has a left child, means that the kth smallest element will surely be in the current left-subtree
+        if nodes_travelled + left_subtree_elem >= k and current.left is not None:  # O(1)
             return self.kth_smallest_aux(current.left, k, nodes_travelled)
-        elif nodes_travelled + left_subtree_elem == k - 1:
-            return current
-        elif nodes_travelled + left_subtree_elem < k - 1 and current.right is not None:
+
+        # In this condition, the reason we +1 is we have to count the current node itself
+        elif nodes_travelled + left_subtree_elem + 1 == k:  # O(1)
+            return current  # O(1)
+
+        # If k value is bigger than (nodes_travelled + left_subtree_elem) and current node has a right child, means that the kth smallest element will surely be in the current right-subtree
+        elif nodes_travelled + left_subtree_elem + 1 < k and current.right is not None:
             return self.kth_smallest_aux(current.right, k, nodes_travelled + left_subtree_elem + 1)
 
-if __name__ == "__main__":
-    import random
-    BST = BinarySearchTree()
-    BST[88] = 1
-    BST[70] = 2
-    BST[60] = 3
-    BST[75] = 2
-    BST[50] = 3
-    BST[64] = 2
-    BST[73] = 3
-    BST[78] = 2
-    BST[40] = 3
-    BST[53] = 2
-    BST[61] = 3
-    BST[65] = 2
-    BST[72] = 3
-    BST[74] = 2
-    BST[77] = 3
-    BST[80] = 1
-    BST[115] = 2
-    BST[98] = 3
-    BST[120] = 2
-    BST[96] = 3
-    BST[105] = 2
-    BST[117] = 3
-    BST[145] = 2
-    BST[95] = 3
-    BST[97]= 2
-    BST[99] = 3
-    BST[107] = 2
-    BST[116] = 3
-    BST[118] = 2
-    BST[130] = 3
-    BST[199] = 0
-
-    lst = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-    random.shuffle(lst)
-
-
-
-    # BST[99] = 7
-    # BST[87] = 2
-    # BST[50] = 9
-    # BST[59] = 0
-    # BST[6] = 9
-
-    for i in range(1,len(BST)+1):
-        kth = BST.kth_smallest(i, BST.root)
-        print(i, ",", kth.key)

@@ -110,7 +110,7 @@ class TestBalancing(unittest.TestCase):
     @timeout()
     @number("4.2")
     def test_large(self):
-        random.seed(10239123)
+        #random.seed(10239123)
         points = []
         coords = list(range(10000))
         random.shuffle(coords)

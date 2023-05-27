@@ -47,16 +47,4 @@ class TestBeehiveSelector(unittest.TestCase):
         for actual, ex in zip(all_emeralds, expected):
             self.assertAlmostEqual(actual, ex, 0)
 
-    @number('5.2')
-    def test_set_all(self):
-        b = BeehiveSelector(5)
-        b.set_all_beehives([Beehive(15, 12, 13, capacity=40, nutrient_factor=5, volume=15),
-                            Beehive(25, 22, 23, capacity=15, nutrient_factor=8, volume=40),
-                            Beehive(35, 32, 33, capacity=40, nutrient_factor=3, volume=40),
-                            Beehive(45, 42, 43, capacity=1, nutrient_factor=85, volume=10),
-                            Beehive(55, 52, 53, capacity=400, nutrient_factor=5000, volume=0)])
-        all_emeralds = []
-        for _ in range(15):
-            all_emeralds.append(b.harvest_best_beehive())
-        print(all_emeralds)
         
